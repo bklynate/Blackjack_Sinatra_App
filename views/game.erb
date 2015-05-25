@@ -1,3 +1,18 @@
-<h3> Welcome <%= session[:username] %> to Web BlackJack</h4>
+<h1>BlackJack</h1>
 
-<h4>Your Cards are: <%= session[:player_cards].to_s %></h4>
+
+<h3> Welcome <%= session[:username] %> to Web BlackJack</h3>
+<h4>Your Cards are:</h4>
+<ul>
+	<% session[:player_cards].each do |card| %>
+	<li><%= card %></li>
+	<% end %>
+</ul>
+<br/>
+<h3>Dealer</h3>
+<h4>Dealer Cards are:</h4>
+<ul>
+	<% session[:dealer_cards].each do |card| %>
+	<li><%= card %></li>
+	<% end %>
+</ul>

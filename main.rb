@@ -26,11 +26,13 @@ end
 
 get '/game' do
   session[:player_cards] = []
-  session[:suits] = ["Clubs :","Diamonds :","Spades :","Hearts :"]
-  session[:card_values] = [2,3,4,5,6,7,8,9,10,"King","Queen","Jack","Ace"]
-
-  session[:deck] = session[:suits].product(session[:card_values])
-  session[:deck].shuffle!
-  session[:player_cards] << session[:deck].pop 
+  session[:dealer_cards] = []
+  suits = ["Clubs :","Diamonds :","Spades :","Hearts :"]
+  card_values = [2,3,4,5,6,7,8,9,10,"King","Queen","Jack","Ace"]
+  session[:deck] = suits.product(card_values).shuffle!
+  session[:player_cards] << session[:deck].pop
+  session[:dealer_cards] << session[:deck].pop
+  session[:player_cards] << session[:deck].pop
+  session[:dealer_cards] << session[:deck].pop
   erb :game
 end
