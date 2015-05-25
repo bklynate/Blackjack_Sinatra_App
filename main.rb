@@ -7,21 +7,20 @@ use Rack::Session::Cookie, :key => 'rack.session',
                            :secret => '19874310BKLYN'
 
 get '/' do
-  if !session[:username]
-    redirect '/form'
+  if session[:username]
+    redirect '/game'
   else  
-    erb :game
+    redirect '/form'
   end
 end
 
 get '/form' do
-  session[:username] = params[:username]
   erb :form
 end
 
 post '/form' do
   session[:username] = params[:username]
-  erb :form
+  redirect '/game'
 end
 
 
