@@ -7,10 +7,10 @@ use Rack::Session::Cookie, :key => 'rack.session',
                            :secret => '19874310BKLYN'
 
 get '/' do
-  if session[:username] == nil
+  if !session[:username]
     redirect '/form'
   else  
-    erb :home
+    erb :game
   end
 end
 
