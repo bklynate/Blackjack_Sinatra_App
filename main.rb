@@ -6,18 +6,24 @@ use Rack::Session::Cookie, :key => 'rack.session',
                            :path => '/',
                            :secret => '19874310BKLYN'
 
-get '/' do  
-  erb :set_name
+get '/' do
+  if session[:username] == nil
+    redirect '/form'
+  else  
+    erb :home
+  end
 end
 
 get '/form' do
+  session[:username] = params[:username]
   erb :form
 end
 
-post '/set_name' do
-  session[:player_name] = params[:player_name]
-  redirect '/game'
+post '/form' do
+  session[:username] = params[:username]
+  erb :form
 end
+
 
 get '/game' do
   session[:player_cards] = []
