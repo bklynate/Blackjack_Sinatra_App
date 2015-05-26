@@ -46,7 +46,7 @@ get '/form' do
 end
 
 post '/form' do
-  session[:username] = params[:username]
+  session[:username] = params[:username].capitalize
   redirect '/game'
 end
 
