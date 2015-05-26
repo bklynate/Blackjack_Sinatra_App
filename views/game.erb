@@ -5,11 +5,9 @@
 <div class='well'>
 	<h3><%= session[:username] %></h3> 
 	<h4>Your Cards are:</h4>
-	<ul>
 		<% session[:player_cards].each do |card| %>
-		<li><%= card %></li>
+			<%= card_image(card) %>
 		<% end %>
-	</ul>
 	<h5>Your Card Total: <%=hand_value(session[:player_cards]) %></h5>
 </div>	
 
@@ -18,21 +16,19 @@
 <div class='well'>
 	<h3>Dealer</h3>
 	<h4>Dealer Cards are:</h4>
-	<ul>
 		<% session[:dealer_cards].each do |card| %>
-		<li><%= card %></li>
+			<%= card_image(card) %>
 		<% end %>
-	</ul>
 	<h5>Dealer Card Total: <%=hand_value(session[:dealer_cards]) %></h5>
 </div>
 <br/>
 
 <% if @show_hit_and_stay %>
-	<form action='/hit' method='post'>
-	 <input type='submit' class='btn' value='Hit'/>
+	<form id='hit_button' action='/hit' method='post'>
+	 <input type='submit' class='btn btn-success' value='Hit'/>
 	</form>
 
-	<form action='/stay' method='post'>
-	 <input type='submit' class='btn' value='Stay'/>
+	<form id='stay_button' action='/stay' method='post'>
+	 <input type='submit' class='btn btn-warning' value='Stay'/>
 	</form>
 <% end %>

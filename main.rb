@@ -27,6 +27,26 @@ helpers do
 
     total
   end
+
+  def card_image(card)
+    suit = case card[0]
+      when 'H' then 'hearts'
+      when 'S' then 'spades'
+      when 'C' then 'clubs'
+      when 'D' then 'diamonds'
+    end
+
+    value = card[1]
+    if ['J','Q','K','A'].include?(value)
+      value = case card[1]
+        when 'J' then 'jack'
+        when 'Q' then 'queen'
+        when 'A' then 'ace'
+        when 'K' then 'king'
+      end
+    end
+    "<img src='/images/cards/#{suit}_#{value}.jpg' class='card_image'>"
+  end  
 end
 
 before do
@@ -73,8 +93,8 @@ end
 get '/game' do
   session[:player_cards] = []
   session[:dealer_cards] = []
-  suits = ["Clubs:","Diamonds:","Spades:","Hearts:"]
-  card_values = [2,3,4,5,6,7,8,9,10,"K","Q","J","A"]
+  suits = ['C','D','S','H']
+  card_values = [2,3,4,5,6,7,8,9,10,'K','Q','J','A']
   session[:deck] = suits.product(card_values).shuffle!
   session[:player_cards] << session[:deck].pop
   session[:dealer_cards] << session[:deck].pop
