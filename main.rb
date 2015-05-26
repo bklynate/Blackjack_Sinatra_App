@@ -56,6 +56,10 @@ post '/hit' do
     @error = "Looks like you have busted."
     @show_hit_and_stay = false
   end
+  if hand_value(session[:player_cards]) == 21
+    @winner = "You Hit Blackjack!!"
+    @show_hit_and_stay = false
+  end
   erb :game
 end
 
@@ -69,8 +73,8 @@ end
 get '/game' do
   session[:player_cards] = []
   session[:dealer_cards] = []
-  suits = ["Clubs :","Diamonds :","Spades :","Hearts :"]
-  card_values = [2,3,4,5,6,7,8,9,10,"King","Queen","Jack","Ace"]
+  suits = ["Clubs:","Diamonds:","Spades:","Hearts:"]
+  card_values = [2,3,4,5,6,7,8,9,10,"K","Q","J","A"]
   session[:deck] = suits.product(card_values).shuffle!
   session[:player_cards] << session[:deck].pop
   session[:dealer_cards] << session[:deck].pop
