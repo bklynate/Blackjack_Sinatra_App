@@ -8,6 +8,7 @@
 	<li><%= card %></li>
 	<% end %>
 </ul>
+<h5>Your Card Total: <%=hand_value(session[:player_cards]) %></h5>
 <br/>
 <h3>Dealer</h3>
 <h4>Dealer Cards are:</h4>
@@ -16,9 +17,16 @@
 	<li><%= card %></li>
 	<% end %>
 </ul>
+<h5>Dealer Card Total: <%=hand_value(session[:dealer_cards]) %></h5>
 
 <br/>
-<form action='/hit' method='post'>
- <input type='submit' class='btn' value='Hit' name='new_card'/>
-</form>
 
+<% if @show_hit_and_stay %>
+	<form action='/hit' method='post'>
+	 <input type='submit' class='btn' value='Hit'/>
+	</form>
+
+	<form action='/stay' method='post'>
+	 <input type='submit' class='btn' value='Stay'/>
+	</form>
+<% end %>
