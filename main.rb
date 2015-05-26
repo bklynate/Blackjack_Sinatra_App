@@ -23,6 +23,12 @@ post '/form' do
   redirect '/game'
 end
 
+post '/hit' do
+  new_card = session[:deck].pop 
+  session[:player_cards] << new_card
+  erb :game
+end
+
 
 get '/game' do
   session[:player_cards] = []
