@@ -46,7 +46,26 @@ helpers do
       end
     end
     "<img src='/images/cards/#{suit}_#{value}.jpg' class='card_image'>"
-  end  
+  end
+
+  def who_won?(player_total,dealer_total)
+    if dealer_total > player_total 
+      @error = "Dealer Wins!!"
+    elsif dealer_total < player_total 
+      @success = "#{player_name} Wins!!"
+    elsif dealer_total == player_total
+      @error = "It's a tie....."  
+    end
+  end
+
+  def blackjack_at_beginning_of_game?
+    if hand_value(session[:player_cards]) == 21
+      @success = "#{session[:player_name]} hit blackjack! " \
+                 "#{session[:player_name]} now has #{pay_winning_hand}$."
+      @show_hit_or_stay_buttons = false
+      @play_again = true
+    end
+  end
 end
 
 before do
@@ -72,12 +91,13 @@ end
 
 post '/hit' do 
   session[:player_cards] << session[:deck].pop
-  if hand_value(session[:player_cards]) > 21
+  player_total = hand_value(session[:player_cards])
+  if player_total > 21
     @error = "Looks like you have busted."
     @show_hit_and_stay = false
   end
-  if hand_value(session[:player_cards]) == 21
-    @winner = "You Hit Blackjack!!"
+  if player_total == 21
+    @winner = "You have hit '21' - YOU WIN!!"
     @show_hit_and_stay = false
   end
   erb :game
@@ -86,19 +106,43 @@ end
 post '/stay' do
   @success = 'You have chosen to stay.'
   @show_hit_and_stay = false
+
+  if hand_value(session[:dealer_cards]) < 17
+    @dealer_turn_to_play = true
+  else
+    who_won?(hand_value(session[:player_cards]),hand_value(session[:dealer_cards]))
+  end
   erb :game
 end
 
+post '/dealer_turn' do
+  session[:dealer_cards] << session[:deck].pop
+  dealer_total = hand_value(session[:dealer_cards])
+  player_total = hand_value(session[:player_cards])
+  @show_hit_or_stay_buttons = false
+
+  if dealer_total >= 17
+    @dealer_turn_to_play = false
+    display_end_results(player_total, dealer_total)
+  else
+    @dealer_turn_to_play = true
+  end
+
+  erb :game
+end
 
 get '/game' do
   session[:player_cards] = []
   session[:dealer_cards] = []
+  
   suits = ['C','D','S','H']
   card_values = [2,3,4,5,6,7,8,9,10,'K','Q','J','A']
+  
   session[:deck] = suits.product(card_values).shuffle!
-  session[:player_cards] << session[:deck].pop
-  session[:dealer_cards] << session[:deck].pop
-  session[:player_cards] << session[:deck].pop
-  session[:dealer_cards] << session[:deck].pop
+
+  2.times do
+    session[:player_cards] << session[:deck].pop
+    session[:dealer_cards] << session[:deck].pop
+  end
   erb :game
 end
