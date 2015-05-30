@@ -58,14 +58,6 @@ helpers do
     end
   end
 
-  def blackjack_at_beginning_of_game?
-    if hand_value(session[:player_cards]) == 21
-      @success = "#{session[:player_name]} hit blackjack! " \
-                 "#{session[:player_name]} now has #{pay_winning_hand}$."
-      @show_hit_or_stay_buttons = false
-      @play_again = true
-    end
-  end
 end
 
 before do
@@ -107,13 +99,7 @@ end
 post '/stay' do
   @success = 'You have chosen to stay.'
   @show_hit_and_stay = false
-
-  if hand_value(session[:dealer_cards]) < 17
-    @dealer_turn_to_play = true
-  else
-    who_won?(hand_value(session[:player_cards]),hand_value(session[:dealer_cards]))
-  end
-  erb :game
+  redirect '/dealer_turn'
 end
 
 get '/dealer_turn' do
@@ -123,10 +109,12 @@ get '/dealer_turn' do
   @show_hit_or_stay_buttons = false
 
   if dealer_total >= 17
-    @dealer_turn_to_play = false
-    display_end_results(player_total, dealer_total)
-  else
-    @dealer_turn_to_play = true
+    who_won?(player_total, dealer_total)
+  elsif dealer_total < 17
+    session[:dealer_cards] << session[:deck].pop
+    redirect '/dealer_turn'
+  elsif dealer_total > 21
+    @success = 'Dealer has busted!'
   end
 
   erb :game
