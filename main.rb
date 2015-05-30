@@ -109,16 +109,19 @@ get '/dealer_turn' do
   @show_dealer_information = true
   dealer_total = hand_value(session[:dealer_cards])
   player_total = hand_value(session[:player_cards])
-  @show_hit_or_stay = false
+  @show_hit_and_stay = false
 
-  if dealer_total >= 17
-    who_won?(player_total, dealer_total)
-    @show_hit_or_stay = false
+  if dealer_total == 21
+    @error = "Dealer Hits Blackjack!!"
+    @show_hit_and_stay = false
+  elsif dealer_total > 21
+    @success = 'Dealer has busted!'
+    @show_hit_and_stay = false
   elsif dealer_total < 17
     session[:dealer_cards] << session[:deck].pop
     redirect '/dealer_turn'
-  elsif dealer_total > 21
-    @success = 'Dealer has busted!'
+  elsif dealer_total <= 21
+    who_won?(player_total, dealer_total)
     @show_hit_and_stay = false
   end
 
