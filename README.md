@@ -5,3 +5,4 @@
 
 This is a web base application of a blackjack simulation
 
+https://serene-springs-6800.herokuapp.com/
