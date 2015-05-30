@@ -70,6 +70,7 @@ end
 
 before do
   @show_hit_and_stay = true
+  @show_dealer_information = false
 end
 
 get '/' do
@@ -115,8 +116,8 @@ post '/stay' do
   erb :game
 end
 
-post '/dealer_turn' do
-  session[:dealer_cards] << session[:deck].pop
+get '/dealer_turn' do
+  @show_dealer_information = true
   dealer_total = hand_value(session[:dealer_cards])
   player_total = hand_value(session[:player_cards])
   @show_hit_or_stay_buttons = false

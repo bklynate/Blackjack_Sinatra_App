@@ -23,7 +23,7 @@
 
   <% if @dealer_turn_to_play %>
     <h5>Dealer has <%= hand_value(session[:dealer_cards]) %> and will hit.</h5>
-    <form action="/game/dealer/turn" method="post">
+    <form action="/dealer_turn" method="post">
       <input type="submit" value="See dealer's next card" class="btn btn-primary dealer_turn">
     </form>
   <% end %>
