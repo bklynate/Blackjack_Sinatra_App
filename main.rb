@@ -6,6 +6,11 @@ use Rack::Session::Cookie, :key => 'rack.session',
                            :path => '/',
                            :secret => '19874310BKLYN'
 
+before do
+  @show_hit_and_stay = true
+  @show_dealer_information = false
+end
+
 helpers do
   def hand_value(cards)
     arr = cards.map{ |value| value[1] }
@@ -51,18 +56,16 @@ helpers do
   def who_won?(player_total,dealer_total)
     if dealer_total > player_total 
       @error = "Dealer Wins!!"
+      @show_hit_and_stay = false
     elsif dealer_total < player_total 
-      @success = "#{player_name} Wins!!"
+      @success = "#{session[:username]} Wins!!"
+      @show_hit_and_stay = false
     elsif dealer_total == player_total
       @error = "It's a tie....."  
+      @show_hit_and_stay = false
     end
   end
 
-end
-
-before do
-  @show_hit_and_stay = true
-  @show_dealer_information = false
 end
 
 get '/' do
@@ -106,15 +109,17 @@ get '/dealer_turn' do
   @show_dealer_information = true
   dealer_total = hand_value(session[:dealer_cards])
   player_total = hand_value(session[:player_cards])
-  @show_hit_or_stay_buttons = false
+  @show_hit_or_stay = false
 
   if dealer_total >= 17
     who_won?(player_total, dealer_total)
+    @show_hit_or_stay = false
   elsif dealer_total < 17
     session[:dealer_cards] << session[:deck].pop
     redirect '/dealer_turn'
   elsif dealer_total > 21
     @success = 'Dealer has busted!'
+    @show_hit_and_stay = false
   end
 
   erb :game
