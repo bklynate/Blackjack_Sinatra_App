@@ -151,8 +151,7 @@ get '/who_won?' do
   @show_dealer_information = true
   dealer_total = hand_value(session[:dealer_cards])
   player_total = hand_value(session[:player_cards])
-  who_won?(dealer_total,player_total)
-
+  who_won?(player_total,dealer_total)
   
   erb :game
 end
