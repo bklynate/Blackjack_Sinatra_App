@@ -76,12 +76,12 @@ helpers do
   end
 
   def blackjack?
-    if session[:dealer_cards] == 21
+    if hand_value(session[:dealer_cards]) == 21
       @error = 'BLACKJACK, Dealer Wins!!'
       @show_hit_and_stay = false
       @show_dealer_hit_button = false
     end
-    if session[:player_cards] == 21
+    if hand_value(session[:player_cards]) == 21
       @success = "BLACKJACK, #{session[:username]} has won!!"
       @show_hit_and_stay = false
       @show_dealer_hit_button = false
