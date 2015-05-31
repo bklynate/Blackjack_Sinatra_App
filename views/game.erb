@@ -16,17 +16,21 @@
 <div class='well'>
 	<h3>Dealer</h3>
 	<h4>Dealer Cards are:</h4>
+	<% if !@show_dealer_information %>	
+		<% card = session[:dealer_cards][1] %>
+		<%= card_image(card) %>
+		<%= hidden_dealer_card %>
+	<% else %>
 		<% session[:dealer_cards].each do |card| %>
 			<%= card_image(card) %>
 		<% end %>
-	<% if @show_dealer_information %>	
 		<h5>Dealer Card Total: <%=hand_value(session[:dealer_cards]) %></h5>
-	<% end %>
-  <% if @dealer_turn_to_play %>
-    <h5>Dealer has <%= hand_value(session[:dealer_cards]) %> and will hit.</h5>
-    <form action="/dealer_turn" method="post">
-      <input type="submit" value="See dealer's next card" class="btn btn-primary dealer_turn">
-    </form>
+    <h5>Dealer has <%= hand_value(session[:dealer_cards]) %> </h5>
+    	<% if @show_dealer_hit_button %>
+    		<form action="/dealer_hit" method="post">
+      		<input type="submit" value="See dealer's next card" class="btn btn-primary dealer_turn" name='dealer_hit'/>
+   		 	</form>
+   		<% end %>
   <% end %>
 </div>
 

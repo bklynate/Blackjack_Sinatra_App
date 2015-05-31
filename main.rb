@@ -9,6 +9,7 @@ use Rack::Session::Cookie, :key => 'rack.session',
 before do
   @show_hit_and_stay = true
   @show_dealer_information = false
+  @show_dealer_hit_button = false
 end
 
 helpers do
@@ -50,22 +51,42 @@ helpers do
         when 'K' then 'king'
       end
     end
+
     "<img src='/images/cards/#{suit}_#{value}.jpg' class='card_image'>"
+  end
+
+  def hidden_dealer_card
+    "<img src='/images/cards/cover.jpg' class='card_image'>"
   end
 
   def who_won?(player_total,dealer_total)
     if dealer_total > player_total 
-      @error = "Dealer Wins!!"
+      @error = 'Dealer Wins!!'
+      @show_dealer_hit_button = false
       @show_hit_and_stay = false
     elsif dealer_total < player_total 
       @success = "#{session[:username]} Wins!!"
       @show_hit_and_stay = false
+      @show_dealer_hit_button = false
     elsif dealer_total == player_total
       @error = "It's a tie....."  
       @show_hit_and_stay = false
+      @show_dealer_hit_button = false
     end
   end
 
+  def blackjack?
+    if session[:dealer_cards] == 21
+      @error = 'BLACKJACK, Dealer Wins!!'
+      @show_hit_and_stay = false
+      @show_dealer_hit_button = false
+    end
+    if session[:player_cards] == 21
+      @success = "BLACKJACK, #{session[:username]} has won!!"
+      @show_hit_and_stay = false
+      @show_dealer_hit_button = false
+    end
+  end
 end
 
 get '/' do
@@ -93,7 +114,7 @@ post '/hit' do
     @show_hit_and_stay = false
   end
   if player_total == 21
-    @winner = "You have hit '21' - YOU WIN!!"
+    @success = "You have hit '21' - YOU WIN!!"
     @show_hit_and_stay = false
   end
   erb :game
@@ -101,32 +122,54 @@ end
 
 post '/stay' do
   @success = 'You have chosen to stay.'
-  @show_hit_and_stay = false
   redirect '/dealer_turn'
 end
 
 get '/dealer_turn' do
   @show_dealer_information = true
+  @show_hit_and_stay = false
   dealer_total = hand_value(session[:dealer_cards])
   player_total = hand_value(session[:player_cards])
-  @show_hit_and_stay = false
+  
+  blackjack?
 
-  if dealer_total == 21
-    @error = "Dealer Hits Blackjack!!"
-    @show_hit_and_stay = false
-  elsif dealer_total > 21
+  if dealer_total > 21
     @success = 'Dealer has busted!'
     @show_hit_and_stay = false
-  elsif dealer_total < 17
-    session[:dealer_cards] << session[:deck].pop
-    redirect '/dealer_turn'
-  elsif dealer_total <= 21
-    who_won?(player_total, dealer_total)
+  elsif dealer_total >= 17
     @show_hit_and_stay = false
+    @show_dealer_hit_button = false
+    redirect '/who_won?'
+  elsif dealer_total < 17
+    redirect '/dealer_hit'
   end
 
   erb :game
 end
+
+get '/who_won?' do
+  @show_dealer_information = true
+  dealer_total = hand_value(session[:dealer_cards])
+  player_total = hand_value(session[:player_cards])
+  who_won?(dealer_total,player_total)
+
+  
+  erb :game
+end
+
+
+get '/dealer_hit' do
+  @show_dealer_information = true
+  @show_dealer_hit_button = true
+  @show_hit_and_stay = false
+  erb :game
+end
+
+post '/dealer_hit' do
+    session[:dealer_cards] << session[:deck].pop
+    redirect '/dealer_turn'
+    erb :game
+end  
 
 get '/game' do
   session[:player_cards] = []
@@ -141,5 +184,8 @@ get '/game' do
     session[:player_cards] << session[:deck].pop
     session[:dealer_cards] << session[:deck].pop
   end
+
+  blackjack?
+  
   erb :game
 end
