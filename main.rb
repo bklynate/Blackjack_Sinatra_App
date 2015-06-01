@@ -10,6 +10,7 @@ before do
   @show_hit_and_stay = true
   @show_dealer_information = false
   @show_dealer_hit_button = false
+  @show_play_again = false
 end
 
 helpers do
@@ -64,14 +65,17 @@ helpers do
       @error = 'Dealer Wins!!'
       @show_dealer_hit_button = false
       @show_hit_and_stay = false
+      @show_play_again = true
     elsif dealer_total < player_total 
       @success = "#{session[:username]} Wins!!"
       @show_hit_and_stay = false
       @show_dealer_hit_button = false
+      @show_play_again = true
     elsif dealer_total == player_total
       @error = "It's a tie....."  
       @show_hit_and_stay = false
       @show_dealer_hit_button = false
+      @show_play_again = true 
     end
   end
 
@@ -80,11 +84,13 @@ helpers do
       @error = 'BLACKJACK, Dealer Wins!!'
       @show_hit_and_stay = false
       @show_dealer_hit_button = false
+      @show_play_again = true
     end
     if hand_value(session[:player_cards]) == 21
       @success = "BLACKJACK, #{session[:username]} has won!!"
       @show_hit_and_stay = false
       @show_dealer_hit_button = false
+      @show_play_again = true
     end
   end
 end
@@ -93,15 +99,15 @@ get '/' do
   if session[:username]
     redirect '/game'
   else  
-    redirect '/form'
+    redirect '/username?'
   end
 end
 
-get '/form' do
+get '/username?' do
   erb :form
 end
 
-post '/form' do
+post '/username?' do
   session[:username] = params[:username].capitalize
   redirect '/game'
 end
@@ -136,6 +142,7 @@ get '/dealer_turn' do
   if dealer_total > 21
     @success = 'Dealer has busted!'
     @show_hit_and_stay = false
+    @show_play_again = true
   elsif dealer_total >= 17
     @show_hit_and_stay = false
     @show_dealer_hit_button = false
@@ -152,7 +159,7 @@ get '/who_won?' do
   dealer_total = hand_value(session[:dealer_cards])
   player_total = hand_value(session[:player_cards])
   who_won?(player_total,dealer_total)
-  
+  @show_play_again = true
   erb :game
 end
 
@@ -169,6 +176,11 @@ post '/dealer_hit' do
     redirect '/dealer_turn'
     erb :game
 end  
+
+post '/play_again' do
+  @show_play_again = true
+  redirect '/game'
+end
 
 get '/game' do
   session[:player_cards] = []
