@@ -9,8 +9,21 @@
 			<%= card_image(card) %>
 		<% end %>
 	<h5>Your Card Total: <%=hand_value(session[:player_cards]) %></h5>
+
 </div>	
 
+<% if @show_hit_and_stay %>
+	<form id='hit_button' action='/hit' method='post'/>
+	 <input type='submit' class='btn btn-success' value='Hit'/>
+	</form>
+
+	<form id='stay_button' action='/stay' method='post'>
+	 <input type='submit' class='btn btn-warning' value='Stay'/>
+	</form>
+<% end %>
+
+	<br/>
+	<br/>
 	<br/>
 
 <div class='well'>
@@ -35,16 +48,6 @@
 </div>
 
 <br/>
-
-<% if @show_hit_and_stay %>
-	<form id='hit_button' action='/hit' method='post'/>
-	 <input type='submit' class='btn btn-success' value='Hit'/>
-	</form>
-
-	<form id='stay_button' action='/stay' method='post'>
-	 <input type='submit' class='btn btn-warning' value='Stay'/>
-	</form>
-<% end %>
 
 <% if @show_play_again %>
 	<form id='play_again_button' action='/play_again' method='post'/>

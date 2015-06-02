@@ -6,6 +6,9 @@ use Rack::Session::Cookie, :key => 'rack.session',
                            :path => '/',
                            :secret => '19874310BKLYN'
 
+BLACKJACK = 21
+DEALER_MIN_HIT_REQUIREMENTS = 17
+
 before do
   @show_hit_and_stay = true
   @show_dealer_information = false
@@ -29,7 +32,7 @@ helpers do
     end
 
     arr.select { |value| value == 'A'}.count.times do
-      total -= 10 if total > 21
+      total -= 10 if total > BLACKJACK
     end
 
     total
@@ -80,13 +83,13 @@ helpers do
   end
 
   def blackjack?
-    if hand_value(session[:dealer_cards]) == 21
+    if hand_value(session[:dealer_cards]) == BLACKJACK
       @error = 'BLACKJACK, Dealer Wins!!'
       @show_hit_and_stay = false
       @show_dealer_hit_button = false
       @show_play_again = true
     end
-    if hand_value(session[:player_cards]) == 21
+    if hand_value(session[:player_cards]) == BLACKJACK
       @success = "BLACKJACK, #{session[:username]} has won!!"
       @show_hit_and_stay = false
       @show_dealer_hit_button = false
@@ -116,13 +119,15 @@ end
 post '/hit' do 
   session[:player_cards] << session[:deck].pop
   player_total = hand_value(session[:player_cards])
-  if player_total > 21
+  if player_total > BLACKJACK
     @error = "Looks like you have busted."
     @show_hit_and_stay = false
+    @show_play_again = true
   end
-  if player_total == 21
-    @success = "You have hit '21' - YOU WIN!!"
+  if player_total == BLACKJACK
+    @success = "You have hit 'BLACKJACK' - YOU WIN!!"
     @show_hit_and_stay = false
+    @show_play_again = true
   end
   erb :game
 end
@@ -140,15 +145,15 @@ get '/dealer_turn' do
   
   blackjack?
 
-  if dealer_total > 21
+  if dealer_total > BLACKJACK
     @success = 'Dealer has busted!'
     @show_hit_and_stay = false
     @show_play_again = true
-  elsif dealer_total >= 17
+  elsif dealer_total >= DEALER_MIN_HIT_REQUIREMENTS
     @show_hit_and_stay = false
     @show_dealer_hit_button = false
     redirect '/who_won?'
-  elsif dealer_total < 17
+  elsif dealer_total < DEALER_MIN_HIT_REQUIREMENTS
     redirect '/dealer_hit'
   end
 
