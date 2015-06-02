@@ -97,17 +97,18 @@ end
 
 get '/' do
   if session[:username]
+  elsif session[:username]
     redirect '/game'
   else  
-    redirect '/username?'
+    redirect '/username'
   end
 end
 
-get '/username?' do
+get '/username' do
   erb :form
 end
 
-post '/username?' do
+post '/username' do
   session[:username] = params[:username].capitalize
   redirect '/game'
 end
