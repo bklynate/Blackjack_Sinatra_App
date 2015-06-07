@@ -77,7 +77,7 @@ helpers do
 
   def blackjack?
     if hand_value(session[:dealer_cards]) == BLACKJACK
-      lose!("DEALER HAS HIT BLACKJACK!!")
+      loser!("DEALER HAS HIT BLACKJACK!!")
     end
     if hand_value(session[:player_cards]) == BLACKJACK
       winner!("BLACKJACK, #{session[:username]} HAS WON!!")
