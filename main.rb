@@ -86,21 +86,21 @@ helpers do
 
   def winner!(msg)
     @show_play_again = true
-    @show_hit_or_stay_buttons = false
+    @show_hit_and_stay = false
     @show_dealer_hit_button = false
     @success = "<strong>#{session[:username]} wins!</strong> #{msg}"
   end
 
   def loser!(msg)
     @show_play_again = true
-    @show_hit_or_stay_buttons = false
+    @show_hit_and_stay = false
     @show_dealer_hit_button = false
     @error = "<strong>#{session[:username]} loses.</strong> #{msg}"
   end
 
   def tie!(msg)
     @show_play_again = true
-    @show_hit_or_stay_buttons = false
+    @show_hit_and_stay = false
     @show_dealer_hit_button = false
     @success = "<strong>It's a tie!</strong> #{msg}"
   end
