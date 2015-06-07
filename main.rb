@@ -31,6 +31,7 @@ helpers do
       end
     end
 
+    #-corrects the issue with Aces
     arr.select { |value| value == 'A'}.count.times do
       total -= 10 if total > BLACKJACK
     end
@@ -38,6 +39,7 @@ helpers do
     total
   end
 
+  #-display card images in the browser
   def card_image(card)
     suit = case card[0]
       when 'H' then 'hearts'
@@ -65,42 +67,47 @@ helpers do
 
   def who_won?(player_total,dealer_total)
     if dealer_total > player_total 
-      @error = 'Dealer Wins!!'
-      @show_dealer_hit_button = false
-      @show_hit_and_stay = false
-      @show_play_again = true
+      loser!("Dealer has won, better luck next time!")
     elsif dealer_total < player_total 
-      @success = "#{session[:username]} Wins!!"
-      @show_hit_and_stay = false
-      @show_dealer_hit_button = false
-      @show_play_again = true
+      winner!("#{session[:username]}.downcase has won!!")
     elsif dealer_total == player_total
-      @error = "It's a tie....."  
-      @show_hit_and_stay = false
-      @show_dealer_hit_button = false
-      @show_play_again = true 
+      tie!("No one truly wins in a time, play again for a win!!") 
     end
   end
 
   def blackjack?
     if hand_value(session[:dealer_cards]) == BLACKJACK
-      @error = 'BLACKJACK, Dealer Wins!!'
-      @show_hit_and_stay = false
-      @show_dealer_hit_button = false
-      @show_play_again = true
+      lose!("DEALER HAS HIT BLACKJACK!!")
     end
     if hand_value(session[:player_cards]) == BLACKJACK
-      @success = "BLACKJACK, #{session[:username]} has won!!"
-      @show_hit_and_stay = false
-      @show_dealer_hit_button = false
-      @show_play_again = true
+      winner!("BLACKJACK, #{session[:username]} HAS WON!!")
     end
+  end
+
+  def winner!(msg)
+    @show_play_again = true
+    @show_hit_or_stay_buttons = false
+    @show_dealer_hit_button = false
+    @success = "<strong>#{session[:username]} wins!</strong> #{msg}"
+  end
+
+  def loser!(msg)
+    @show_play_again = true
+    @show_hit_or_stay_buttons = false
+    @show_dealer_hit_button = false
+    @error = "<strong>#{session[:username]} loses.</strong> #{msg}"
+  end
+
+  def tie!(msg)
+    @show_play_again = true
+    @show_hit_or_stay_buttons = false
+    @show_dealer_hit_button = false
+    @success = "<strong>It's a tie!</strong> #{msg}"
   end
 end
 
 get '/' do
   if session[:username]
-  elsif session[:username]
     redirect '/game'
   else  
     redirect '/username'
@@ -119,16 +126,15 @@ end
 post '/hit' do 
   session[:player_cards] << session[:deck].pop
   player_total = hand_value(session[:player_cards])
+
   if player_total > BLACKJACK
-    @error = "Looks like you have busted."
-    @show_hit_and_stay = false
-    @show_play_again = true
+    loser!("Awww shucks #{session[:username]}.downcase, you busted - You Lose.")
   end
+
   if player_total == BLACKJACK
-    @success = "You have hit 'BLACKJACK' - YOU WIN!!"
-    @show_hit_and_stay = false
-    @show_play_again = true
+    winner!("#{session[:username]}.downcase has hit 'BLACKJACK' - YOU WIN!!")
   end
+
   erb :game
 end
 
@@ -146,13 +152,11 @@ get '/dealer_turn' do
   blackjack?
 
   if dealer_total > BLACKJACK
-    @success = 'Dealer has busted!'
-    @show_hit_and_stay = false
-    @show_play_again = true
+    winner!('The dealer has busted!')
   elsif dealer_total >= DEALER_MIN_HIT_REQUIREMENTS
     @show_hit_and_stay = false
     @show_dealer_hit_button = false
-    redirect '/who_won?'
+    redirect '/who_won'
   elsif dealer_total < DEALER_MIN_HIT_REQUIREMENTS
     redirect '/dealer_hit'
   end
@@ -160,7 +164,7 @@ get '/dealer_turn' do
   erb :game
 end
 
-get '/who_won?' do
+get '/who_won' do
   @show_dealer_information = true
   dealer_total = hand_value(session[:dealer_cards])
   player_total = hand_value(session[:player_cards])

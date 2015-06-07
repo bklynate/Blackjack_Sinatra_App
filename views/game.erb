@@ -11,9 +11,9 @@
 	<h5>Your Card Total: <%=hand_value(session[:player_cards]) %></h5>
 
 </div>	
-
+	
 <% if @show_hit_and_stay %>
-	<form id='hit_button' action='/hit' method='post'/>
+	<form id='hit_button' action='/hit' method='post' align='center'>
 	 <input type='submit' class='btn btn-success' value='Hit'/>
 	</form>
 
