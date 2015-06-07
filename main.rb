@@ -69,7 +69,7 @@ helpers do
     if dealer_total > player_total 
       loser!("Dealer has won, better luck next time!")
     elsif dealer_total < player_total 
-      winner!("#{session[:username]}.downcase has won!!")
+      winner!("#{session[:username].downcase} has won!!")
     elsif dealer_total == player_total
       tie!("No one truly wins in a time, play again for a win!!") 
     end
@@ -128,11 +128,11 @@ post '/hit' do
   player_total = hand_value(session[:player_cards])
 
   if player_total > BLACKJACK
-    loser!("Awww shucks #{session[:username]}.downcase, you busted - You Lose.")
+    loser!("Awww shucks #{session[:username].downcase} you busted - You Lose.")
   end
 
   if player_total == BLACKJACK
-    winner!("#{session[:username]}.downcase has hit 'BLACKJACK' - YOU WIN!!")
+    winner!("#{session[:username].downcase }has hit '21' - YOU WIN!!")
   end
 
   erb :game
