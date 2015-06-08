@@ -77,6 +77,7 @@ helpers do
 
   def blackjack?
     if hand_value(session[:dealer_cards]) == BLACKJACK
+      @show_dealer_information = true
       loser!("DEALER HAS HIT BLACKJACK!!")
     end
     if hand_value(session[:player_cards]) == BLACKJACK
