@@ -13,13 +13,14 @@
 </div>	
 	
 <% if @show_hit_and_stay %>
+	<div id="centered_buttons">
 	<form id='hit_button' action='/hit' method='post' align='center'>
-	 <input type='submit' class='btn btn-success' value='Hit'/>
+		 <input type='submit' class='btn btn-success' value='Hit'/>
 	</form>
-
 	<form id='stay_button' action='/stay' method='post'>
 	 <input type='submit' class='btn btn-warning' value='Stay'/>
 	</form>
+	</div>
 <% end %>
 
 	<br/>
@@ -50,7 +51,9 @@
 <br/>
 
 <% if @show_play_again %>
+<div id="centered_buttons">
 	<form id='play_again_button' action='/play_again' method='post'/>
 		<input type='submit' class='btn btn-inverse' value='Play Again?'/>
 	</form>
+</div>
 <% end %>

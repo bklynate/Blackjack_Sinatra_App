@@ -120,8 +120,17 @@ get '/username' do
 end
 
 post '/username' do
-  session[:username] = params[:username].capitalize
-  redirect '/game'
+  session[:username] = params[:username]
+  if session[:username].empty?
+    @error = "<strong>Please provide your name..</strong>"
+  elsif session[:username].length > 13
+    @error = "<strong>Too many characters..</strong>"
+  else
+    session[:username] = params[:username].capitalize
+    redirect '/game'
+  end
+
+  erb :form
 end
 
 post '/hit' do 
