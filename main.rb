@@ -108,7 +108,7 @@ helpers do
 end
 
 get '/' do
-  if session[:username]
+  if session[:username] && session[:bet]
     redirect '/game'
   else  
     redirect '/username'
@@ -120,6 +120,7 @@ get '/username' do
 end
 
 post '/username' do
+  session[:player_money] = 1000
   session[:username] = params[:username]
   if session[:username].empty?
     @error = "<strong>Please provide your name..</strong>"
@@ -127,10 +128,26 @@ post '/username' do
     @error = "<strong>Too many characters..</strong>"
   else
     session[:username] = params[:username].capitalize
-    redirect '/game'
+    redirect '/bet'
   end
 
-  erb :form
+  #erb :form
+end
+
+get '/bet' do 
+  erb :bet
+end
+
+post '/bet' do
+  session[:bet] = params[:bet].to_i
+
+  if session[:bet].to_i == 0 || session[:bet] < 0
+    @error = "Please, input a whole number integer"
+  elsif session[:bet] > session[:player_money]
+    @error = "You can't bet more than what's in your wallet."
+  end
+
+  erb :bet
 end
 
 post '/hit' do 
