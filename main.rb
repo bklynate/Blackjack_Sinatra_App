@@ -126,6 +126,8 @@ post '/username' do
   session[:username] = params[:username]
   if session[:username].empty?
     @error = "<strong>Please provide your name..</strong>"
+  elsif session[:username].to_i.is_a? Integer
+    @error = "<strong>Your name can't have an integer in it..</strong>"    
   elsif session[:username].length > 13
     @error = "<strong>Too many characters..</strong>"
   else
@@ -133,7 +135,7 @@ post '/username' do
     redirect '/bet'
   end
 
-  #erb :form
+  erb :form
 end
 
 get '/bet' do
