@@ -90,6 +90,7 @@ helpers do
     @show_hit_and_stay = false
     @show_dealer_hit_button = false
     @success = "<strong>#{session[:username]} wins!</strong> #{msg}"
+    session[:player_money] += session[:bet]
   end
 
   def loser!(msg)
@@ -97,6 +98,7 @@ helpers do
     @show_hit_and_stay = false
     @show_dealer_hit_button = false
     @error = "<strong>#{session[:username]} loses.</strong> #{msg}"
+    session[:player_money] -= session[:bet]
   end
 
   def tie!(msg)
@@ -134,7 +136,11 @@ post '/username' do
   #erb :form
 end
 
-get '/bet' do 
+get '/bet' do
+  if session[:player_money] == 0
+    @error = "Looks like you are out of money... click the start over link"
+  end
+
   erb :bet
 end
 
@@ -143,11 +149,13 @@ post '/bet' do
 
   if session[:bet].to_i == 0 || session[:bet] < 0
     @error = "Please, input a whole number integer"
+    halt erb(:bet)
   elsif session[:bet] > session[:player_money]
     @error = "You can't bet more than what's in your wallet."
+    halt erb(:bet)
   end
 
-  erb :bet
+  redirect '/game'
 end
 
 post '/hit' do 
@@ -216,7 +224,7 @@ end
 
 post '/play_again' do
   @show_play_again = true
-  redirect '/game'
+  redirect '/bet'
 end
 
 get '/game' do
