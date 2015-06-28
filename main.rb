@@ -126,8 +126,6 @@ post '/username' do
   session[:username] = params[:username]
   if session[:username].empty?
     @error = "<strong>Please provide your name..</strong>"
-  elsif session[:username].to_i == 0
-    @error = "<strong>Your name can't have an integer in it..</strong>"
   elsif session[:username].to_i > 0
     @error = "<strong>No numbers allowed in this field</strong>"
   elsif session[:username].length > 13
@@ -142,7 +140,7 @@ end
 
 get '/bet' do
   if session[:player_money] == 0
-    @error = "Looks like you are out of money... click the start over link"
+    @error = "Looks like you are out of money... <a href='/username'>start over</a>"
   end
 
   erb :bet
