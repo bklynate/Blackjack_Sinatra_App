@@ -207,6 +207,7 @@ get '/who_won' do
   player_total = hand_value(session[:player_cards])
   who_won?(player_total,dealer_total)
   @show_play_again = true
+  
   erb :game
 end
 
@@ -215,12 +216,14 @@ get '/dealer_hit' do
   @show_dealer_information = true
   @show_dealer_hit_button = true
   @show_hit_and_stay = false
+  
   erb :game
 end
 
 post '/dealer_hit' do
     session[:dealer_cards] << session[:deck].pop
     redirect '/dealer_turn'
+    
     erb :game
 end  
 

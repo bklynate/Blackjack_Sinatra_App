@@ -4,7 +4,14 @@
 <h5>You have <u>$<%= session[:player_money] %></u> in your player pot.</h5>
 
 <form action='/bet' method='post'>
- Your Bet: <input type='text' name='bet'/>
+	<div class="input-prepend input-append">
+  	<span class="add-on">$</span>
+  	<input class="span2" id="appendedPrependedInput" type="text">
+  	<span class="add-on">.00</span>
+ </div>
  <br/>
  <input type='submit' class='btn'/>
 </form>
+
+
+
