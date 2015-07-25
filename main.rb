@@ -184,7 +184,6 @@ get '/dealer_turn' do
   @show_dealer_information = true
   @show_hit_and_stay = false
   dealer_total = hand_value(session[:dealer_cards])
-  player_total = hand_value(session[:player_cards])
 
   check_for_blackjack
 
