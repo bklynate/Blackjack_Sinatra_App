@@ -66,12 +66,12 @@ helpers do
   end
 
   def who_won?(player_total,dealer_total)
-    if dealer_total > player_total 
+    if dealer_total > player_total
       loser!("Dealer has won, better luck next time!")
-    elsif dealer_total < player_total 
+    elsif dealer_total < player_total
       winner!("#{session[:username].downcase} has won!!")
     elsif dealer_total == player_total
-      tie!("No one truly wins in a time, play again for a win!!") 
+      tie!("No one truly wins in a time, play again for a win!!")
     end
   end
 
@@ -89,7 +89,7 @@ helpers do
     @show_play_again = true
     @show_hit_and_stay = false
     @show_dealer_hit_button = false
-    @success = "<strong>#{session[:username]} wins!</strong> #{msg}"
+    @winner = "<strong>#{session[:username]} wins!</strong> #{msg}"
     session[:player_money] += session[:bet]
   end
 
@@ -97,7 +97,7 @@ helpers do
     @show_play_again = true
     @show_hit_and_stay = false
     @show_dealer_hit_button = false
-    @error = "<strong>#{session[:username]} loses.</strong> #{msg}"
+    @loser = "<strong>#{session[:username]} loses.</strong> #{msg}"
     session[:player_money] -= session[:bet]
   end
 
@@ -105,14 +105,14 @@ helpers do
     @show_play_again = true
     @show_hit_and_stay = false
     @show_dealer_hit_button = false
-    @success = "<strong>It's a tie!</strong> #{msg}"
+    @winner = "<strong>It's a tie!</strong> #{msg}"
   end
 end
 
 get '/' do
   if session[:username] && session[:bet]
     redirect '/game'
-  else  
+  else
     redirect '/username'
   end
 end
@@ -140,7 +140,7 @@ end
 
 get '/bet' do
   if session[:player_money] == 0
-    @error = "Looks like you are out of money... <a href='/username'>start over</a>"
+    @error = "Looks like you are out of money... <a href='/username'>you may click here to start over</a>"
   end
 
   erb :bet
@@ -149,8 +149,8 @@ end
 post '/bet' do
   session[:bet] = params[:bet].to_i
 
-  if session[:bet].to_i == 0 || session[:bet] < 0
-    @error = "Please, input a whole number integer"
+  if session[:bet] == 0 || session[:bet] < 0 || session[:bet].nil?
+    @error = "Please, input a positive whole number integer."
     halt erb(:bet)
   elsif session[:bet] > session[:player_money]
     @error = "You can't bet more than what's in your wallet."
@@ -160,19 +160,19 @@ post '/bet' do
   redirect '/game'
 end
 
-post '/hit' do 
+post '/hit' do
   session[:player_cards] << session[:deck].pop
   player_total = hand_value(session[:player_cards])
 
   if player_total > BLACKJACK
-    loser!("Awww shucks #{session[:username].downcase} you busted - You Lose.")
+    loser!("Awww shucks #{session[:username]} you busted - You Lose.")
   end
 
   if player_total == BLACKJACK
-    winner!("#{session[:username].downcase }has hit '21' - YOU WIN!!")
+    winner!("#{session[:username]} has hit '21' - YOU WIN!!")
   end
 
-  erb :game
+  erb :game, layout: false
 end
 
 post '/stay' do
@@ -185,7 +185,7 @@ get '/dealer_turn' do
   @show_hit_and_stay = false
   dealer_total = hand_value(session[:dealer_cards])
   player_total = hand_value(session[:player_cards])
-  
+
   blackjack?
 
   if dealer_total > BLACKJACK
@@ -198,7 +198,7 @@ get '/dealer_turn' do
     redirect '/dealer_hit'
   end
 
-  erb :game
+  erb :game, layout: false
 end
 
 get '/who_won' do
@@ -207,8 +207,8 @@ get '/who_won' do
   player_total = hand_value(session[:player_cards])
   who_won?(player_total,dealer_total)
   @show_play_again = true
-  
-  erb :game
+
+  erb :game, layout: false
 end
 
 
@@ -216,16 +216,16 @@ get '/dealer_hit' do
   @show_dealer_information = true
   @show_dealer_hit_button = true
   @show_hit_and_stay = false
-  
+
   erb :game
 end
 
 post '/dealer_hit' do
     session[:dealer_cards] << session[:deck].pop
     redirect '/dealer_turn'
-    
+
     erb :game
-end  
+end
 
 post '/play_again' do
   @show_play_again = true
@@ -235,10 +235,10 @@ end
 get '/game' do
   session[:player_cards] = []
   session[:dealer_cards] = []
-  
+
   suits = ['C','D','S','H']
   card_values = [2,3,4,5,6,7,8,9,10,'K','Q','J','A']
-  
+
   session[:deck] = suits.product(card_values).shuffle!
 
   2.times do
@@ -247,6 +247,6 @@ get '/game' do
   end
 
   blackjack?
-  
+
   erb :game
 end
