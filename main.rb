@@ -75,7 +75,7 @@ helpers do
     end
   end
 
-  def blackjack?
+  def check_for_blackjack
     if hand_value(session[:dealer_cards]) == BLACKJACK
       @show_dealer_information = true
       loser!("DEALER HAS HIT BLACKJACK!!")
@@ -186,7 +186,7 @@ get '/dealer_turn' do
   dealer_total = hand_value(session[:dealer_cards])
   player_total = hand_value(session[:player_cards])
 
-  blackjack?
+  check_for_blackjack
 
   if dealer_total > BLACKJACK
     winner!('The dealer has busted!')
@@ -221,10 +221,10 @@ get '/dealer_hit' do
 end
 
 post '/dealer_hit' do
-    session[:dealer_cards] << session[:deck].pop
-    redirect '/dealer_turn'
+  session[:dealer_cards] << session[:deck].pop
+  redirect '/dealer_turn'
 
-    erb :game
+  erb :game
 end
 
 post '/play_again' do
@@ -246,7 +246,7 @@ get '/game' do
     session[:dealer_cards] << session[:deck].pop
   end
 
-  blackjack?
+  check_for_blackjack
 
   erb :game
 end
