@@ -81,7 +81,7 @@ helpers do
       loser!("DEALER HAS HIT BLACKJACK!!")
     end
     if hand_value(session[:player_cards]) == BLACKJACK
-      winner!("BLACKJACK, #{session[:username]} HAS WON!!")
+      winner!("BLACKJACK")
     end
   end
 
@@ -165,11 +165,11 @@ post '/hit' do
   player_total = hand_value(session[:player_cards])
 
   if player_total > BLACKJACK
-    loser!("Awww shucks #{session[:username]} you busted - You Lose.")
+    loser!("Awww shucks #{session[:username]} you busted")
   end
 
   if player_total == BLACKJACK
-    winner!("#{session[:username]} has hit '21' - YOU WIN!!")
+    winner!("#{session[:username]} has hit '21'")
   end
 
   erb :game, layout: false
